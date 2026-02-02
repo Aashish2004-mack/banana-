@@ -17,19 +17,29 @@ Banana/
 ├── upload.html           # Frontend web interface
 ├── requirements.txt      # Python dependencies
 ├── run_server.bat       # Windows batch script to run server
+├── .gitignore           # Git ignore file
 ├── Banana/
 │   ├── data_preprocessing.ipynb  # Model training notebook
 │   ├── data/            # Training and test datasets
-│   └── saved_models/    # Trained model weights
-└── README.md
+│   │   ├── train/       # Training images by disease class
+│   │   └── test/        # Test images by disease class
+│   ├── saved_models/    # Trained model weights
+│   │   ├── epoch_01/    # Model weights from epoch 1
+│   │   ├── epoch_02/    # Model weights from epoch 2
+│   │   ├── ...
+│   │   └── epoch_20/    # Final model weights
+│   │       └── banana_cnn_epoch_20.pth
+│   ├── saved_models_224/ # Alternative model weights (224x224)
+│   └── prediction/      # Sample prediction images
+└── README.md            # Project documentation
 ```
 
 ## Installation
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/banana-disease-classification.git
-   cd banana-disease-classification
+   git clone https://github.com/Aashish2004-mack/banana-.git
+   cd banana-
    ```
 
 2. **Install dependencies**
