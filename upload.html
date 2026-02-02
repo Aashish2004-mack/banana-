@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banana Disease Classification</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; }
+        .upload-area { border: 2px dashed #ccc; padding: 40px; text-align: center; margin: 20px 0; }
+        .upload-area:hover { border-color: #007bff; }
+        input[type="file"] { margin: 20px 0; }
+        button { background: #007bff; color: white; padding: 10px 20px; border: none; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        #preview { max-width: 300px; margin: 20px auto; display: none; }
+        #result { margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Banana Disease Classification</h1>
+    
+    <div class="upload-area" onclick="document.getElementById('imageInput').click()">
+        <p>Click here or drag and drop an image</p>
+        <input type="file" id="imageInput" accept="image/*" style="display: none;">
+    </div>
+    
+    <img id="preview" alt="Preview">
+    <button id="uploadBtn" onclick="classifyImage()" style="display: none;">Classify Image</button>
+    
+    <div id="result"></div>
+
+    <script>
+        const imageInput = document.getElementById('imageInput');
+        const preview = document.getElementById('preview');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const result = document.getElementById('result');
+
+        imageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    uploadBtn.style.display = 'inline-block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function classifyImage() {
+            const file = imageInput.files[0];
+            if (!file) return;
+
+            result.innerHTML = '<p>Analyzing image...</p>';
+            uploadBtn.disabled = true;
+
+            const formData = new FormData();
+            formData.append('image', file);
+
+            fetch('/predict', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                
+                let resultHTML = `
+                    <h3>Classification Result:</h3>
+                    <p><strong>Primary Diagnosis:</strong> ${data.prediction}</p>
+                    <p><strong>Confidence:</strong> ${(data.confidence * 100).toFixed(2)}%</p>
+                `;
+                
+                if (data.top3) {
+                    resultHTML += '<h4>Top 3 Predictions:</h4><ul>';
+                    data.top3.forEach((pred, index) => {
+                        resultHTML += `<li>${pred.disease}: ${(pred.confidence * 100).toFixed(2)}%</li>`;
+                    });
+                    resultHTML += '</ul>';
+                }
+                
+                result.innerHTML = resultHTML;
+                uploadBtn.disabled = false;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                result.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+                uploadBtn.disabled = false;
+            });
+        }
+    </script>
+</body>
+</html>
