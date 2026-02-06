@@ -13,6 +13,10 @@
         button:hover { background: #0056b3; }
         #preview { max-width: 300px; margin: 20px auto; display: none; }
         #result { margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 5px; }
+        #backendConfig { margin: 15px 0; padding: 12px; border: 1px solid #e1e1e1; border-radius: 6px; background: #fafafa; }
+        #backendConfig input { width: 100%; padding: 8px; box-sizing: border-box; margin-top: 6px; }
+        #backendConfig button { margin-top: 8px; }
+        #backendHint { font-size: 12px; color: #555; margin-top: 6px; }
 
         /* Spinner styles */
         .loader {
@@ -38,6 +42,13 @@
 </head>
 <body>
     <h1>Banana Disease Classification</h1>
+
+    <div id="backendConfig" style="display: none;">
+        <strong>Backend URL</strong>
+        <div id="backendHint">Set your Render backend URL (example: https://your-app.onrender.com)</div>
+        <input type="url" id="backendUrlInput" placeholder="https://your-app.onrender.com">
+        <button id="saveBackendBtn" type="button">Save Backend URL</button>
+    </div>
     
     <div class="upload-area" onclick="document.getElementById('imageInput').click()">
         <p>Click here or drag and drop an image</p>
@@ -56,6 +67,41 @@
         const loader = document.getElementById('loader');
         const uploadBtn = document.getElementById('uploadBtn');
         const result = document.getElementById('result');
+        const backendConfig = document.getElementById('backendConfig');
+        const backendUrlInput = document.getElementById('backendUrlInput');
+        const saveBackendBtn = document.getElementById('saveBackendBtn');
+
+        const STORAGE_KEY = 'banana_backend_url';
+
+        function isGitHubPages() {
+            return window.location.hostname.includes('github.io');
+        }
+
+        function getBackendUrl() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) return saved;
+            return isGitHubPages() ? '' : window.location.origin;
+        }
+
+        function ensureBackendConfigured() {
+            const url = getBackendUrl();
+            if (isGitHubPages() && !url) {
+                backendConfig.style.display = 'block';
+            } else {
+                backendConfig.style.display = 'none';
+            }
+            return url;
+        }
+
+        saveBackendBtn.addEventListener('click', function() {
+            const url = backendUrlInput.value.trim();
+            if (!url) return;
+            localStorage.setItem(STORAGE_KEY, url);
+            backendConfig.style.display = 'none';
+            result.innerHTML = '<div class="error-message"><b>Saved.</b> You can now upload an image.</div>';
+        });
+
+        ensureBackendConfigured();
 
         imageInput.addEventListener('change', function(e) {
             const file = e.target.files[0];
@@ -81,14 +127,10 @@
             const formData = new FormData();
             formData.append('image', file);
 
-            // If hosting on GitHub Pages, set this to your Render backend URL
-            // Example: const API_URL = 'https://banana-disease-classifier.onrender.com';
-            // TODO: Replace 'https://your-app-name.onrender.com' with your ACTUAL Render URL
-            const API_URL = 'https://banana-disease-classifier.onrender.com';
+            const API_URL = ensureBackendConfigured();
 
-            // Check if running on GitHub Pages without API_URL or with placeholder
-            if (window.location.hostname.includes('github.io') && (!API_URL || API_URL.includes('your-app-name') || API_URL.includes('INSERT-YOUR-RENDER-URL-HERE'))) {
-                result.innerHTML = `<div class="error-message"><b>Configuration Required</b><br>To use this on GitHub Pages, you must link it to your Render backend.<br><br>1. Open <b>index.html</b> in your code.<br>2. Find <b>const API_URL</b>.<br>3. Paste your Render URL inside the quotes.<br>4. Push to GitHub.</div>`;
+            if (isGitHubPages() && !API_URL) {
+                result.innerHTML = `<div class="error-message"><b>Configuration Required</b><br>To use this on GitHub Pages, set your backend URL above.</div>`;
                 uploadBtn.disabled = false;
                 loader.style.display = 'none';
                 return;
