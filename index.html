@@ -57,7 +57,11 @@
             const formData = new FormData();
             formData.append('image', file);
 
-            fetch('/predict', {
+            // If hosting on GitHub Pages, set this to your Render backend URL
+            // Example: const API_URL = 'https://banana-disease-classifier.onrender.com';
+            const API_URL = ''; 
+
+            fetch(`${API_URL}/predict`, {
                 method: 'POST',
                 body: formData
             })

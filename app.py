@@ -47,9 +47,14 @@ model = BananaCNN(num_classes=7).to(device)
 
 # Load trained weights (adjust path as needed)
 try:
-    model.load_state_dict(torch.load('Banana/saved_models/epoch_20/banana_cnn_epoch_20.pth', map_location=device))
+    weights_path = 'Banana/saved_models/epoch_20/banana_cnn_epoch_20.pth'
+    if not os.path.exists(weights_path):
+        # Fallback for different directory structures (e.g. on Render)
+        weights_path = 'saved_models/epoch_20/banana_cnn_epoch_20.pth'
+        
+    model.load_state_dict(torch.load(weights_path, map_location=device))
     model.eval()
-    print("Model loaded successfully")
+    print(f"Model loaded successfully from {weights_path}")
 except Exception as e:
     print(f"Warning: Could not load model weights: {e}. Using untrained model.")
 
