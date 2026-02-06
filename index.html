@@ -84,11 +84,11 @@
             // If hosting on GitHub Pages, set this to your Render backend URL
             // Example: const API_URL = 'https://banana-disease-classifier.onrender.com';
             // TODO: Replace 'https://your-app-name.onrender.com' with your ACTUAL Render URL
-            const API_URL = 'https://your-app-name.onrender.com'; 
+            const API_URL = ''; // 🔴 PASTE YOUR RENDER URL HERE inside the quotes
 
-            // Check if running on GitHub Pages without API_URL
-            if (window.location.hostname.includes('github.io') && !API_URL) {
-                result.innerHTML = `<div class="error-message"><b>Error: Backend Not Found (405)</b><br>You are using the GitHub Pages link, which only shows the frontend. Please use your <b>Render URL</b> to run the full application.</div>`;
+            // Check if running on GitHub Pages without API_URL or with placeholder
+            if (window.location.hostname.includes('github.io') && (!API_URL || API_URL.includes('your-app-name'))) {
+                result.innerHTML = `<div class="error-message"><b>Configuration Required</b><br>To use this on GitHub Pages, you must link it to your Render backend.<br><br>1. Open <b>index.html</b> in your code.<br>2. Find <b>const API_URL</b>.<br>3. Paste your Render URL inside the quotes.<br>4. Push to GitHub.</div>`;
                 uploadBtn.disabled = false;
                 loader.style.display = 'none';
                 return;
