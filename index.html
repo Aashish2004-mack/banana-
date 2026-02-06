@@ -84,10 +84,10 @@
             // If hosting on GitHub Pages, set this to your Render backend URL
             // Example: const API_URL = 'https://banana-disease-classifier.onrender.com';
             // TODO: Replace 'https://your-app-name.onrender.com' with your ACTUAL Render URL
-            const API_URL = ''; // 🔴 PASTE YOUR RENDER URL HERE inside the quotes
+            const API_URL = 'https://INSERT-YOUR-RENDER-URL-HERE.onrender.com'; // 🔴 REPLACE THIS with your actual Render URL
 
             // Check if running on GitHub Pages without API_URL or with placeholder
-            if (window.location.hostname.includes('github.io') && (!API_URL || API_URL.includes('your-app-name'))) {
+            if (window.location.hostname.includes('github.io') && (!API_URL || API_URL.includes('your-app-name') || API_URL.includes('INSERT-YOUR-RENDER-URL-HERE'))) {
                 result.innerHTML = `<div class="error-message"><b>Configuration Required</b><br>To use this on GitHub Pages, you must link it to your Render backend.<br><br>1. Open <b>index.html</b> in your code.<br>2. Find <b>const API_URL</b>.<br>3. Paste your Render URL inside the quotes.<br>4. Push to GitHub.</div>`;
                 uploadBtn.disabled = false;
                 loader.style.display = 'none';
