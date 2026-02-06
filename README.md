@@ -57,13 +57,27 @@ Banana/
 
 ## Deployment
 
-See [DEPLOYMENT.md](DEPLOYMENT.md) for hosting options:
-- **Render** (Recommended - Free)
-- **Railway** (Easy deployment)
-- **Hugging Face Spaces** (Best for ML)
-- **ngrok** (Quick local sharing)
+### Quick Deploy to Render (Recommended)
 
-**Note**: GitHub Pages doesn't support Python backends. Use the deployment options above.
+1. **Sign up at [render.com](https://render.com)**
+2. **Click "New +" → "Web Service"**
+3. **Connect GitHub repository**: `https://github.com/Aashish2004-mack/banana-.git`
+4. **Configure**:
+   - Name: `banana-disease-classifier`
+   - Environment: `Python 3`
+   - Build Command: `pip install -r requirements.txt`
+   - Start Command: `gunicorn app:app`
+5. **Click "Create Web Service"**
+6. **Wait 5-10 minutes** - Your app will be live at `https://banana-disease-classifier.onrender.com`
+
+### When Deployed:
+- ✅ The **web interface** (upload.html) will show at the root URL
+- ✅ Users can upload images and get predictions
+- ✅ README is only visible on GitHub, not on the hosted site
+
+See [DEPLOYMENT.md](DEPLOYMENT.md) for more hosting options.
+
+**Note**: GitHub Pages doesn't support Python backends. Use Render, Railway, or other platforms above.
 
 ## Usage
 
