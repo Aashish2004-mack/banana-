@@ -46,15 +46,26 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = BananaCNN(num_classes=7).to(device)
 
 # Load trained weights (adjust path as needed)
+# Use absolute path relative to this file to ensure it works on Render
+base_dir = os.path.dirname(os.path.abspath(__file__))
+
 try:
-    weights_path = 'Banana/saved_models/epoch_20/banana_cnn_epoch_20.pth'
-    if not os.path.exists(weights_path):
-        # Fallback for different directory structures (e.g. on Render)
-        weights_path = 'saved_models/epoch_20/banana_cnn_epoch_20.pth'
-        
-    model.load_state_dict(torch.load(weights_path, map_location=device))
-    model.eval()
-    print(f"Model loaded successfully from {weights_path}")
+    # Check multiple possible locations for the model
+    possible_paths = [
+        os.path.join(base_dir, 'Banana', 'saved_models', 'epoch_20', 'banana_cnn_epoch_20.pth'),
+        os.path.join(base_dir, 'saved_models', 'epoch_20', 'banana_cnn_epoch_20.pth'),
+        os.path.join(base_dir, 'banana_cnn_epoch_20.pth')
+    ]
+    
+    weights_path = next((p for p in possible_paths if os.path.exists(p)), None)
+            
+    if weights_path:
+        model.load_state_dict(torch.load(weights_path, map_location=device))
+        model.eval()
+        print(f"Model loaded successfully from {weights_path}")
+    else:
+        print("Warning: Model file not found in expected paths.")
+
 except Exception as e:
     print(f"Warning: Could not load model weights: {e}. Using untrained model.")
 
@@ -78,7 +89,8 @@ transform = transforms.Compose([
 
 @app.route('/')
 def index():
-    with open('index.html', 'r') as f:
+    # Use absolute path to find index.html
+    with open(os.path.join(base_dir, 'index.html'), 'r') as f:
         return f.read()
 
 @app.route('/predict', methods=['POST'])
@@ -121,4 +133,6 @@ def predict():
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    # Use PORT environment variable if available (required for Render)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(debug=True, host='0.0.0.0', port=port)
