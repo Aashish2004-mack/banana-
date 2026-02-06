@@ -6,6 +6,7 @@ from torchvision import transforms
 from PIL import Image
 import io
 import os
+import urllib.request
 
 app = Flask(__name__)
 CORS(app)
@@ -58,13 +59,27 @@ try:
     ]
     
     weights_path = next((p for p in possible_paths if os.path.exists(p)), None)
-            
-    if weights_path:
+    
+    # If model is missing, try to download it from GitHub Releases
+    if not weights_path:
+        # This URL matches the release instructions in Step 1
+        MODEL_URL = "https://github.com/Aashish2004-mack/banana-/releases/download/v1.0/banana_cnn_epoch_20.pth"
+        
+        print(f"Model not found locally. Downloading from {MODEL_URL}...")
+        try:
+            save_path = os.path.join(base_dir, 'banana_cnn_epoch_20.pth')
+            urllib.request.urlretrieve(MODEL_URL, save_path)
+            weights_path = save_path
+            print("Download complete.")
+        except Exception as e:
+            print(f"Failed to download model: {e}")
+
+    if weights_path and os.path.exists(weights_path):
         model.load_state_dict(torch.load(weights_path, map_location=device))
         model.eval()
         print(f"Model loaded successfully from {weights_path}")
     else:
-        print("Warning: Model file not found in expected paths.")
+        print("Warning: Model file not found and could not be downloaded. Using untrained model.")
 
 except Exception as e:
     print(f"Warning: Could not load model weights: {e}. Using untrained model.")
@@ -90,7 +105,11 @@ transform = transforms.Compose([
 @app.route('/')
 def index():
     # Use absolute path to find index.html
-    with open(os.path.join(base_dir, 'index.html'), 'r') as f:
+    index_path = os.path.join(base_dir, 'index.html')
+    if not os.path.exists(index_path):
+        return "Error: index.html not found. Please ensure index.html exists in the same directory as app.py", 404
+        
+    with open(index_path, 'r') as f:
         return f.read()
 
 @app.route('/predict', methods=['POST'])
