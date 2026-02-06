@@ -13,6 +13,27 @@
         button:hover { background: #0056b3; }
         #preview { max-width: 300px; margin: 20px auto; display: none; }
         #result { margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 5px; }
+
+        /* Spinner styles */
+        .loader {
+            border: 5px solid #f3f3f3; /* Light grey */
+            border-top: 5px solid #3498db; /* Blue */
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            display: none; /* Hidden by default */
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* Error message style */
+        .error-message {
+            color: #D8000C; background-color: #FFD2D2; border: 1px solid #D8000C;
+            padding: 15px; border-radius: 5px; margin-top: 20px; text-align: left;
+        }
     </style>
 </head>
 <body>
@@ -25,12 +46,14 @@
     
     <img id="preview" alt="Preview">
     <button id="uploadBtn" onclick="classifyImage()" style="display: none;">Classify Image</button>
-    
+
+    <div id="loader" class="loader"></div>
     <div id="result"></div>
 
     <script>
         const imageInput = document.getElementById('imageInput');
         const preview = document.getElementById('preview');
+        const loader = document.getElementById('loader');
         const uploadBtn = document.getElementById('uploadBtn');
         const result = document.getElementById('result');
 
@@ -51,8 +74,9 @@
             const file = imageInput.files[0];
             if (!file) return;
 
-            result.innerHTML = '<p>Analyzing image...</p>';
+            result.innerHTML = ''; // Clear previous results
             uploadBtn.disabled = true;
+            loader.style.display = 'block'; // Show spinner
 
             const formData = new FormData();
             formData.append('image', file);
@@ -63,8 +87,9 @@
 
             // Check if running on GitHub Pages without API_URL
             if (window.location.hostname.includes('github.io') && !API_URL) {
-                result.innerHTML = '<p style="color: red;"><b>Error (405):</b> You are using the GitHub Pages link. Please use your <b>Render URL</b> instead (e.g., https://your-app.onrender.com), or configure API_URL in index.html.</p>';
+                result.innerHTML = `<div class="error-message"><b>Error: Backend Not Found (405)</b><br>You are using the GitHub Pages link, which only shows the frontend. Please use your <b>Render URL</b> to run the full application.</div>`;
                 uploadBtn.disabled = false;
+                loader.style.display = 'none';
                 return;
             }
 
@@ -99,11 +124,13 @@
                 
                 result.innerHTML = resultHTML;
                 uploadBtn.disabled = false;
+                loader.style.display = 'none';
             })
             .catch(error => {
                 console.error('Error:', error);
-                result.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+                result.innerHTML = `<div class="error-message"><b>Error:</b> ${error.message}</div>`;
                 uploadBtn.disabled = false;
+                loader.style.display = 'none';
             });
         }
     </script>
