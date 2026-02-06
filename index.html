@@ -61,6 +61,13 @@
             // Example: const API_URL = 'https://banana-disease-classifier.onrender.com';
             const API_URL = ''; 
 
+            // Check if running on GitHub Pages without API_URL
+            if (window.location.hostname.includes('github.io') && !API_URL) {
+                result.innerHTML = '<p style="color: red;"><b>Error (405):</b> You are using the GitHub Pages link. Please use your <b>Render URL</b> instead (e.g., https://your-app.onrender.com), or configure API_URL in index.html.</p>';
+                uploadBtn.disabled = false;
+                return;
+            }
+
             fetch(`${API_URL}/predict`, {
                 method: 'POST',
                 body: formData

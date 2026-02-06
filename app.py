@@ -112,8 +112,11 @@ def index():
     with open(index_path, 'r') as f:
         return f.read()
 
-@app.route('/predict', methods=['POST'])
+@app.route('/predict', methods=['GET', 'POST'])
 def predict():
+    if request.method == 'GET':
+        return jsonify({'status': 'active', 'message': 'Backend is running. Send a POST request with an image to classify.'})
+
     if 'image' not in request.files:
         return jsonify({'error': 'No image uploaded'}), 400
     
