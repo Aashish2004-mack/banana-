@@ -55,6 +55,16 @@ Banana/
 
 4. **Open browser** and go to `http://localhost:5000`
 
+## Deployment
+
+See [DEPLOYMENT.md](DEPLOYMENT.md) for hosting options:
+- **Render** (Recommended - Free)
+- **Railway** (Easy deployment)
+- **Hugging Face Spaces** (Best for ML)
+- **ngrok** (Quick local sharing)
+
+**Note**: GitHub Pages doesn't support Python backends. Use the deployment options above.
+
 ## Usage
 
 1. Open the web application in your browser
