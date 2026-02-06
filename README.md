@@ -14,7 +14,7 @@ A deep learning web application for classifying banana leaf diseases using PyTor
 ```
 Banana/
 ├── app.py                 # Flask backend server
-├── upload.html           # Frontend web interface
+├── index.html            # Frontend web interface
 ├── requirements.txt      # Python dependencies
 ├── run_server.bat       # Windows batch script to run server
 ├── .gitignore           # Git ignore file
@@ -71,7 +71,7 @@ Banana/
 6. **Wait 5-10 minutes** - Your app will be live at `https://banana-disease-classifier.onrender.com`
 
 ### When Deployed:
-- ✅ The **web interface** (upload.html) will show at the root URL
+- ✅ The **web interface** (index.html) will show at the root URL
 - ✅ Users can upload images and get predictions
 - ✅ README is only visible on GitHub, not on the hosted site
 

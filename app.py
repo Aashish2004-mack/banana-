@@ -73,7 +73,7 @@ transform = transforms.Compose([
 
 @app.route('/')
 def index():
-    with open('upload.html', 'r') as f:
+    with open('index.html', 'r') as f:
         return f.read()
 
 @app.route('/predict', methods=['POST'])
@@ -116,5 +116,4 @@ def predict():
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
-    app.run(debug=False, host='0.0.0.0', port=port)
+    app.run(debug=True, host='0.0.0.0', port=5000)
